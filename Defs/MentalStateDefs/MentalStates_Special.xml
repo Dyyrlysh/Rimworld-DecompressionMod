@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<Defs>
+    <MentalStateDef>
+        <defName>VacuumPanic</defName>
+        <stateClass>DecompressionMod.MentalState_VacuumPanic</stateClass>
+        <category>Misc</category>
+        <nameColor>(1, 0.3, 0.5)</nameColor>
+        <description>Trying to find air by any means necessary.</description>
+        <beginLetter>VacuumPanicBeginLetter</beginLetter>
+        <beginLetterLabel>Vacuum panic</beginLetterLabel>
+        <beginLetterDef>ThreatSmall</beginLetterDef>
+        <baseInspectLine>Desperately trying to find air.</baseInspectLine>
+        <recoveryMessage>{0} is no longer desperate for air.</recoveryMessage>
+        <blockRandomInteraction>true</blockRandomInteraction>
+        <minTicksBeforeRecovery>120</minTicksBeforeRecovery>
+        <recoverFromSleep>false</recoverFromSleep>
+        <allowBeatfire>false</allowBeatfire>
+    </MentalStateDef>
+</Defs>

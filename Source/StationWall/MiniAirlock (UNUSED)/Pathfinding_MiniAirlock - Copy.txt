@@ -1,0 +1,114 @@
+﻿using HarmonyLib;
+using RimWorld;
+using System;
+using System.Collections.Generic;
+using System.Reflection;
+using UnityEngine;
+using Verse;
+using Verse.AI;
+
+namespace DecompressionMod
+{
+    [StaticConstructorOnStartup]
+    public static class AirlockHarmonyPatches
+    {
+        static AirlockHarmonyPatches()
+        {
+            try
+            {
+                var harmony = new Harmony("DecompressionMod.AirlockPatches");
+                Log.Message("[DecompressionMod] Applying enhanced Harmony patches...");
+
+                harmony.PatchAll();
+
+                Log.Message("[DecompressionMod] Enhanced Harmony patches applied successfully.");
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"[DecompressionMod] Failed to apply Harmony patches: {ex}");
+            }
+        }
+    }
+
+    // ENHANCED: Multiple pathfinding patches to ensure airlock traversal works
+    [HarmonyPatch]
+    public static class Patch_PathGrid_CalculatedCostAt
+    {
+        static MethodBase TargetMethod()
+            => AccessTools.Method(typeof(PathGrid), "CalculatedCostAt",
+                new Type[] { typeof(IntVec3), typeof(bool), typeof(IntVec3) });
+
+        static void Postfix(PathGrid __instance, IntVec3 c, bool perceivedStatic, IntVec3 prevCell, ref int __result)
+        {
+            try
+            {
+                var map = Traverse.Create(__instance).Field("map").GetValue<Map>();
+                if (map == null) return;
+
+                var edifice = c.GetEdifice(map);
+                if (edifice is Building_MiniAirlock)
+                {
+                    __result = 10;
+                }
+            }
+            catch (Exception ex) { if (Prefs.DevMode) Log.Warning($"[DecompressionMod] PathGrid.CalculatedCostAt postfix error: {ex.Message}"); }
+        }
+    }
+
+
+    // NEW: Patch to ensure airlock cells are considered walkable for pathfinding
+    [HarmonyPatch]
+    public static class Patch_PathGrid_WalkableFast
+    {
+        static MethodBase TargetMethod()
+            => AccessTools.Method(typeof(PathGrid), "WalkableFast",
+                new Type[] { typeof(IntVec3) });
+
+        static void Postfix(PathGrid __instance, IntVec3 c, ref bool __result)
+        {
+            try
+            {
+                if (__result) return;
+
+                var map = Traverse.Create(__instance).Field("map").GetValue<Map>();
+                if (map == null) return;
+
+                var edifice = c.GetEdifice(map);
+                if (edifice is Building_MiniAirlock)
+                {
+                    __result = true;
+                }
+            }
+            catch (Exception ex) { if (Prefs.DevMode) Log.Warning($"[DecompressionMod] PathGrid.WalkableFast postfix error: {ex.Message}"); }
+        }
+    }
+
+
+    // NEW: Patch to ensure pathfinder considers airlock as passable
+    [HarmonyPatch]
+    public static class Patch_PathFinder_GetBuildingCost
+    {
+        static MethodBase TargetMethod()
+            => AccessTools.Method(typeof(PathFinder), "GetBuildingCost",
+                new Type[] { typeof(Building), typeof(TraverseParms), typeof(Pawn) });
+
+        static bool Prefix(Building b, TraverseParms traverseParms, Pawn pawn, ref int __result)
+        {
+            try
+            {
+                if (b is Building_MiniAirlock airlock)
+                {
+                    if (airlock.PawnCanOpen(pawn))
+                        __result = 10;
+                    else
+                        __result = 10000;
+                    return false;
+                }
+            }
+            catch (Exception ex) { if (Prefs.DevMode) Log.Warning($"[DecompressionMod] PathFinder.GetBuildingCost prefix error: {ex.Message}"); }
+
+            return true;
+        }
+    }
+
+}

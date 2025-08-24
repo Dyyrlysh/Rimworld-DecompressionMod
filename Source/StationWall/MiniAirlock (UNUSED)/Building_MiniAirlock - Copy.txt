@@ -1,0 +1,761 @@
+﻿using RimWorld;
+using System.Collections.Generic;
+using UnityEngine;
+using Verse;
+using Verse.AI;
+using Verse.Sound;
+
+namespace DecompressionMod
+{
+    public class Building_MiniAirlock : Building, ISelectable
+    {
+        // Core airlock state - FIXED: Start with inner door open, outer closed
+        private bool innerDoorOpen = true;  // Default: inner door OPEN
+        private bool outerDoorOpen = false; // Default: outer door CLOSED
+        private bool isPlayerControlled = false;
+        private bool automaticCycle = true; // Default on
+
+        // NEW: Explicit spawn state tracking
+        private bool fullyInitialized = false;
+
+        // Cycling state
+        private bool isCycling = false;
+        private int cyclingTicksRemaining = 0;
+        private Pawn currentUser = null;
+        private bool cycleCompleted = false;
+
+        // NEW: Auto-cycle cooldown to prevent spam
+        private int autoCycleCooldown = 0;
+        private const int AutoCycleCooldownTicks = 120; // 2 seconds
+
+        // Constants
+        public const int CyclingDuration = 90; // About same as stone door opening time
+
+        public bool InnerDoorOpen => innerDoorOpen;
+        public bool OuterDoorOpen => outerDoorOpen;
+        public bool IsCycling => isCycling;
+        public bool AutomaticCycle => automaticCycle;
+
+        private bool topologyDirtyQueued;
+        private int topologyDirtyQueuedTick;
+
+        private void QueueTopologyDirty()
+        {
+            topologyDirtyQueued = true;
+            topologyDirtyQueuedTick = Find.TickManager.TicksGame;
+        }
+
+        private void DirtySeamNow()
+        {
+            topologyDirtyQueued = false;
+
+            // Dirty just the two seam cells
+            MiniAirlockRegionHelper.GetEdgeCells(this, out var e1, out var e2);
+            if (e1.InBounds(Map)) Map.regionDirtyer.DirtyCells.Add(e1);
+            if (e2.InBounds(Map)) Map.regionDirtyer.DirtyCells.Add(e2);
+
+            // Also dirty the center tile
+            Map.regionDirtyer.DirtyCells.Add(Position);
+
+            Map.GetComponent<VacuumComponent>()?.Dirty();
+        }
+
+
+        private void NotifyTopologyChanged()
+        {
+            // Force region regeneration
+            Map.regionDirtyer.DirtyCells.Add(Position);
+
+            // Also dirty adjacent cells
+            foreach (IntVec3 adj in GenAdj.CellsAdjacentCardinal(this))
+            {
+                if (adj.InBounds(Map))
+                {
+                    Map.regionDirtyer.DirtyCells.Add(adj);
+                }
+            }
+
+            // Force vacuum system update
+            Map.GetComponent<VacuumComponent>()?.Dirty();
+        }
+
+        // FIXED: Airlock is sealed when BOTH doors are closed
+        public bool IsSealed => !innerDoorOpen && !outerDoorOpen;
+
+        // CRITICAL FIX: This is what VacuumComponent checks to determine if rooms should merge
+        public override bool IsAirtight
+        {
+            get
+            {
+                // ALWAYS airtight unless BOTH doors are open
+                bool result = !(innerDoorOpen && outerDoorOpen);
+                return result;
+            }
+        }
+
+        // CRITICAL FIX: Only exchange vacuum when both doors are open
+        public override bool ExchangeVacuum
+        {
+            get
+            {
+                // During spawning, NEVER exchange vacuum until fully initialized
+                if (!fullyInitialized || !Spawned)
+                {
+                    return false;
+                }
+
+                // Only exchange when both doors are open
+                bool result = innerDoorOpen && outerDoorOpen;
+                return result;
+            }
+        }
+
+        public override void SpawnSetup(Map map, bool respawningAfterLoad)
+        {
+            // CRITICAL: Set state BEFORE calling base.SpawnSetup
+            if (!respawningAfterLoad)
+            {
+                innerDoorOpen = true;  // Inner side (pressurized) open by default
+                outerDoorOpen = false; // Outer side (vacuum) closed by default
+                isCycling = false;
+                cycleCompleted = false;
+                fullyInitialized = false; // Not yet initialized
+                autoCycleCooldown = 0;
+            }
+            else
+            {
+                fullyInitialized = true; // Loading from save, already initialized
+            }
+
+            base.SpawnSetup(map, respawningAfterLoad);
+
+            // NOW mark as fully initialized
+            fullyInitialized = true;
+
+            // CRITICAL: Force region rebuild to split rooms properly
+            map.regionDirtyer.DirtyCells.Add(Position);
+
+            // Also dirty adjacent cells to ensure proper room splitting
+            foreach (IntVec3 adj in GenAdj.CellsAdjacentCardinal(this))
+            {
+                if (adj.InBounds(map))
+                {
+                    map.regionDirtyer.DirtyCells.Add(adj);
+                }
+            }
+
+            // Force vacuum system to rebuild AFTER we're fully set up
+            map.GetComponent<VacuumComponent>()?.Dirty();
+        }
+
+        public override void DeSpawn(DestroyMode mode = DestroyMode.Vanish)
+        {
+            // Mark as not initialized
+            fullyInitialized = false;
+
+            // Force vacuum system to rebuild when airlock is removed
+            Map?.GetComponent<VacuumComponent>()?.Dirty();
+            QueueTopologyDirty();
+            base.DeSpawn(mode);
+        }
+
+        protected override void Tick()
+        {
+            base.Tick();
+
+            // Decrement cooldowns
+            if (autoCycleCooldown > 0)
+                autoCycleCooldown--;
+
+            if (isCycling)
+            {
+                cyclingTicksRemaining--;
+                if (cyclingTicksRemaining <= 0)
+                {
+                    CompleteCycle();
+                }
+            }
+
+            // Handle automatic cycling when pawn approaches
+            if (automaticCycle && !isCycling && !isPlayerControlled && autoCycleCooldown <= 0)
+            {
+                CheckForAutomaticCycle();
+            }
+
+            // Reset cycle completion flag after a delay
+            if (cycleCompleted && Find.TickManager.TicksGame % 60 == 0)
+            {
+                cycleCompleted = false;
+            }
+
+            if (topologyDirtyQueued && Find.TickManager.TicksGame == topologyDirtyQueuedTick)
+            {
+                DirtySeamNow();
+            }
+        }
+
+        private void CheckForAutomaticCycle()
+        {
+            // Look for pawns standing on the airlock itself
+            Pawn pawnOnAirlock = Position.GetFirstPawn(Map);
+            if (pawnOnAirlock != null && ShouldPawnUseCycle(pawnOnAirlock))
+            {
+                StartCycleForPawn(pawnOnAirlock);
+                return;
+            }
+
+            // Check the two cardinal cells that the airlock connects
+            IntVec3[] relevantCells = GetRelevantApproachCells();
+            foreach (IntVec3 cell in relevantCells)
+            {
+                if (!cell.InBounds(Map)) continue;
+
+                Pawn pawn = cell.GetFirstPawn(Map);
+                if (pawn != null && ShouldPawnUseCycle(pawn))
+                {
+                    StartCycleForPawn(pawn);
+                    break;
+                }
+            }
+        }
+
+        // NEW: Get the two cells that pawns would logically approach the airlock from
+        private IntVec3[] GetRelevantApproachCells()
+        {
+            // Return the two cells that the airlock connects (based on rotation)
+            switch (Rotation.AsInt)
+            {
+                case 0: // North - connects north and south
+                    return new IntVec3[] { Position + IntVec3.North, Position + IntVec3.South };
+                case 1: // East - connects east and west  
+                    return new IntVec3[] { Position + IntVec3.East, Position + IntVec3.West };
+                case 2: // South - connects north and south
+                    return new IntVec3[] { Position + IntVec3.North, Position + IntVec3.South };
+                case 3: // West - connects east and west
+                    return new IntVec3[] { Position + IntVec3.East, Position + IntVec3.West };
+                default:
+                    return new IntVec3[] { Position + IntVec3.North, Position + IntVec3.South };
+            }
+        }
+
+        private bool ShouldPawnUseCycle(Pawn pawn)
+        {
+            if (pawn.Downed || pawn.Dead) return false;
+            if (!PawnCanOpen(pawn)) return false;
+            if (cycleCompleted) return false; // Don't trigger if just completed
+
+            // CRITICAL: Only cycle if pawn is actively moving AND has a path that goes through the airlock
+            if (pawn.pather == null || !pawn.pather.Moving) return false;
+
+            var destination = pawn.pather.Destination;
+            if (!destination.IsValid) return false;
+
+            // Check if the pawn's path actually requires going through this airlock
+            IntVec3 pawnPos = pawn.Position;
+            IntVec3 destPos = destination.Cell;
+            IntVec3 airlockPos = Position;
+
+            // Simple check: is the airlock between the pawn and their destination?
+            if (!IsAirlockOnPath(pawnPos, destPos, airlockPos)) return false;
+
+            // Get vacuum levels
+            float pawnVacuum = pawnPos.GetVacuum(Map);
+            float destVacuum = destPos.GetVacuum(Map);
+
+            // Determine which side of airlock the pawn is on
+            IntVec3[] approachCells = GetRelevantApproachCells();
+            bool pawnOnSideA = pawnPos == approachCells[0] ||
+                               (approachCells[0] - pawnPos).LengthHorizontalSquared <= 1;
+
+            // Check if current door configuration allows pawn to proceed
+            if (pawnVacuum > 0.5f) // Pawn in vacuum
+            {
+                if (outerDoorOpen && !innerDoorOpen) return false; // Already correctly configured
+                if (destVacuum > 0.5f) return false; // Both in vacuum, no cycle needed
+            }
+            else // Pawn in atmosphere
+            {
+                if (innerDoorOpen && !outerDoorOpen) return false; // Already correctly configured  
+                if (destVacuum <= 0.5f) return false; // Both in atmosphere, no cycle needed
+            }
+
+            // Only cycle if there's a meaningful pressure difference and wrong door config
+            float vacuumDiff = Mathf.Abs(pawnVacuum - destVacuum);
+            return vacuumDiff > 0.3f;
+        }
+
+        private bool IsAirlockOnPath(IntVec3 start, IntVec3 dest, IntVec3 airlock)
+        {
+            // Simple geometric check: is the airlock closer to the straight line between start and dest
+            // than it is to either endpoint?
+
+            float startToAirlock = (start - airlock).LengthHorizontal;
+            float destToAirlock = (dest - airlock).LengthHorizontal;
+            float startToDest = (start - dest).LengthHorizontal;
+
+            // If airlock is much farther from either point than the total distance, it's not on path
+            return (startToAirlock + destToAirlock) < (startToDest + 5f); // Allow some tolerance
+        }
+
+        public void StartCycleForPawn(Pawn pawn)
+        {
+            currentUser = pawn;
+            isCycling = true;
+            cyclingTicksRemaining = CyclingDuration;
+            cycleCompleted = false;
+            autoCycleCooldown = AutoCycleCooldownTicks; // Set cooldown
+
+            float pawnVacuum = pawn.Position.GetVacuum(Map);
+            var destination = pawn.pather?.Destination;
+
+            if (destination.HasValue && destination.Value.IsValid)
+            {
+                float destVacuum = destination.Value.Cell.GetVacuum(Map);
+
+                // IMPROVED: Set doors based on pawn's intended transition
+                if (pawnVacuum > 0.5f && destVacuum <= 0.5f)
+                {
+                    // Going from vacuum to atmosphere: open outer, close inner
+                    outerDoorOpen = true;
+                    innerDoorOpen = false;
+                }
+                else if (pawnVacuum <= 0.5f && destVacuum > 0.5f)
+                {
+                    // Going from atmosphere to vacuum: open inner, close outer  
+                    innerDoorOpen = true;
+                    outerDoorOpen = false;
+                }
+                else
+                {
+                    // Fallback to original logic
+                    if (pawnVacuum > 0.5f)
+                    {
+                        outerDoorOpen = true;
+                        innerDoorOpen = false;
+                    }
+                    else
+                    {
+                        innerDoorOpen = true;
+                        outerDoorOpen = false;
+                    }
+                }
+            }
+            else
+            {
+                // Fallback when no clear destination
+                if (pawnVacuum > 0.5f)
+                {
+                    outerDoorOpen = true;
+                    innerDoorOpen = false;
+                }
+                else
+                {
+                    innerDoorOpen = true;
+                    outerDoorOpen = false;
+                }
+            }
+
+            def.building.soundDoorOpenManual?.PlayOneShot(this);
+
+            // CRITICAL: Notify vacuum system that airlock state changed
+            Map.GetComponent<VacuumComponent>()?.Dirty();
+            QueueTopologyDirty();
+        }
+
+        private void CompleteCycle()
+        {
+            // FIXED: Complete cycle by swapping door states
+            bool wasInnerOpen = innerDoorOpen;
+            bool wasOuterOpen = outerDoorOpen;
+
+            innerDoorOpen = wasOuterOpen;
+            outerDoorOpen = wasInnerOpen;
+
+            isCycling = false;
+            cycleCompleted = true;
+            autoCycleCooldown = AutoCycleCooldownTicks; // Set cooldown after cycle
+
+            def.building.soundDoorCloseManual?.PlayOneShot(this);
+
+            if (currentUser != null)
+            {
+                currentUser = null;
+            }
+
+            // CRITICAL: Notify vacuum system that airlock state changed
+            Map.GetComponent<VacuumComponent>()?.Dirty();
+            QueueTopologyDirty();
+        }
+
+        // FIXED: Manual cycle method - swaps door states
+        public void ManualCycle(Pawn actor = null)
+        {
+            if (isCycling) return;
+
+            // Swap the door states
+            bool wasInnerOpen = innerDoorOpen;
+            bool wasOuterOpen = outerDoorOpen;
+
+            innerDoorOpen = wasOuterOpen;
+            outerDoorOpen = wasInnerOpen;
+
+            isPlayerControlled = true;
+            autoCycleCooldown = AutoCycleCooldownTicks; // Set cooldown
+            def.building.soundDoorOpenManual?.PlayOneShot(this);
+
+            // CRITICAL: Notify vacuum system that airlock state changed
+            Map.GetComponent<VacuumComponent>()?.Dirty();
+            QueueTopologyDirty();
+        }
+
+        // NEW: Manual door control methods for when auto-cycle is disabled
+        public void ForceInnerDoor(bool open, Pawn actor = null)
+        {
+            if (isCycling) return;
+
+            innerDoorOpen = open;
+            isPlayerControlled = true;
+            autoCycleCooldown = AutoCycleCooldownTicks; // Set cooldown
+
+            def.building.soundDoorOpenManual?.PlayOneShot(this);
+
+            // CRITICAL: Notify vacuum system that airlock state changed
+            Map.GetComponent<VacuumComponent>()?.Dirty();
+            QueueTopologyDirty();
+        }
+
+        public void ForceOuterDoor(bool open, Pawn actor = null)
+        {
+            if (isCycling) return;
+
+            outerDoorOpen = open;
+            isPlayerControlled = true;
+            autoCycleCooldown = AutoCycleCooldownTicks; // Set cooldown
+
+            def.building.soundDoorOpenManual?.PlayOneShot(this);
+
+            // CRITICAL: Notify vacuum system that airlock state changed
+            Map.GetComponent<VacuumComponent>()?.Dirty();
+            QueueTopologyDirty();
+        }
+
+        public void ToggleAutomaticCycle()
+        {
+            automaticCycle = !automaticCycle;
+
+            if (automaticCycle)
+            {
+                isPlayerControlled = false;
+                cycleCompleted = false;
+                autoCycleCooldown = 0; // Reset cooldown when enabling
+            }
+
+            Messages.Message($"Airlock auto-cycle {(automaticCycle ? "enabled" : "disabled")}. {(automaticCycle ? "Pawns will cycle automatically." : "Manual door control available.")}",
+                this, MessageTypeDefOf.TaskCompletion);
+        }
+
+        // Door-like methods for compatibility
+        public bool PawnCanOpen(Pawn p)
+        {
+            if (!p.CanOpenDoors) return false;
+            if (p.Faction == Faction.OfPlayer) return true;
+            if (Faction != null && !p.HostileTo(this)) return true;
+            return false;
+        }
+
+        // Override BlocksPawn to ensure proper pathfinding - FIXED
+        public override bool BlocksPawn(Pawn p)
+        {
+            // Never block pawns who can open it
+            if (PawnCanOpen(p)) return false;
+
+            // Block pawns who can't open it
+            return true;
+        }
+
+        // FIXED: Low pathfinding cost - treat like floor
+        public override ushort PathWalkCostFor(Pawn p)
+        {
+            if (!PawnCanOpen(p)) return 10000; // Impassable for those who can't use it
+
+            // IMPROVED: Consider current state when calculating cost
+            if (isCycling) return 50; // Higher cost when cycling, but still passable
+
+            // If doors are in a state that allows passage, lower cost
+            float pawnVacuum = p.Position.GetVacuum(Map);
+            if (pawnVacuum > 0.5f && outerDoorOpen) return 15; // Vacuum side open
+            if (pawnVacuum <= 0.5f && innerDoorOpen) return 15; // Atmosphere side open
+
+            return 25; // Default cost when cycling might be needed
+        }
+
+        // NEW: Override to help with traversal
+        public bool CanBeSeenOver()
+        {
+            return false; // Airlock blocks vision
+        }
+
+        // NEW: Override to ensure proper room separation
+        public bool IsFence(bool ignoreLinked = false)
+        {
+            return false; // Not a fence, it's a proper barrier
+        }
+
+
+        // FIXED: Float menu options - now supports manual controls
+        public override IEnumerable<FloatMenuOption> GetFloatMenuOptions(Pawn selPawn)
+        {
+            // Add base options first
+            foreach (var option in base.GetFloatMenuOptions(selPawn))
+            {
+                yield return option;
+            }
+
+            // Only add options for player pawns who can use the airlock
+            if (selPawn.Faction != Faction.OfPlayer || !PawnCanOpen(selPawn))
+                yield break;
+
+            if (!isCycling)
+            {
+                if (automaticCycle)
+                {
+                    // Option 1: Cycle (when in auto mode)
+                    yield return new FloatMenuOption("Cycle airlock", delegate ()
+                    {
+                        Job job = JobMaker.MakeJob(DecompressionJobDefOf.UseAirlock, this);
+                        selPawn.jobs.TryTakeOrderedJob(job, JobTag.Misc);
+                    });
+                }
+                else
+                {
+                    // Option 1: Cycle (when in manual mode)
+                    yield return new FloatMenuOption("Cycle airlock", delegate ()
+                    {
+                        Job job = JobMaker.MakeJob(DecompressionJobDefOf.UseAirlock, this);
+                        selPawn.jobs.TryTakeOrderedJob(job, JobTag.Misc);
+                    });
+
+                    // Option 2: Manual override - inner door
+                    string innerLabel = $"Manual override: {(innerDoorOpen ? "close" : "open")} inner door";
+                    yield return new FloatMenuOption(innerLabel, delegate ()
+                    {
+                        Job job = JobMaker.MakeJob(DecompressionJobDefOf.UseAirlock, this);
+                        job.count = 1; // Flag for inner door operation
+                        selPawn.jobs.TryTakeOrderedJob(job, JobTag.Misc);
+                    });
+
+                    // Option 3: Manual override - outer door  
+                    string outerLabel = $"Manual override: {(outerDoorOpen ? "close" : "open")} outer door";
+                    yield return new FloatMenuOption(outerLabel, delegate ()
+                    {
+                        Job job = JobMaker.MakeJob(DecompressionJobDefOf.UseAirlock, this);
+                        job.count = 2; // Flag for outer door operation
+                        selPawn.jobs.TryTakeOrderedJob(job, JobTag.Misc);
+                    });
+                }
+            }
+            else
+            {
+                yield return new FloatMenuOption("Airlock cycling...", null);
+            }
+        }
+
+        public override IEnumerable<Gizmo> GetGizmos()
+        {
+            foreach (Gizmo gizmo in base.GetGizmos())
+            {
+                yield return gizmo;
+            }
+
+            if (Faction == Faction.OfPlayer)
+            {
+                if (automaticCycle)
+                {
+                    // Simple cycle button for auto mode
+                    Command_Target cycleCommand = new Command_Target
+                    {
+                        defaultLabel = "Cycle airlock",
+                        defaultDesc = "Select a pawn to manually cycle the airlock doors.",
+                        icon = TexCommand.Attack,
+                        targetingParams = TargetingParameters.ForPawns(),
+                        action = delegate (LocalTargetInfo target)
+                        {
+                            if (target.Pawn != null && target.Pawn.Faction == Faction.OfPlayer)
+                            {
+                                Job job = JobMaker.MakeJob(DecompressionJobDefOf.UseAirlock, this);
+                                target.Pawn.jobs.TryTakeOrderedJob(job, JobTag.Misc);
+                            }
+                        }
+                    };
+
+                    if (isCycling)
+                    {
+                        cycleCommand.Disable("Airlock is currently cycling");
+                    }
+
+                    yield return cycleCommand;
+                }
+                else
+                {
+                    // Manual mode - cycle + individual door controls
+                    // Cycle button (same as auto mode)
+                    Command_Target cycleCommand = new Command_Target
+                    {
+                        defaultLabel = "Cycle airlock",
+                        defaultDesc = "Select a pawn to cycle the airlock doors.",
+                        icon = TexCommand.Attack,
+                        targetingParams = TargetingParameters.ForPawns(),
+                        action = delegate (LocalTargetInfo target)
+                        {
+                            if (target.Pawn != null && target.Pawn.Faction == Faction.OfPlayer)
+                            {
+                                Job job = JobMaker.MakeJob(DecompressionJobDefOf.UseAirlock, this);
+                                target.Pawn.jobs.TryTakeOrderedJob(job, JobTag.Misc);
+                            }
+                        }
+                    };
+
+                    if (isCycling)
+                    {
+                        cycleCommand.Disable("Airlock is currently cycling");
+                    }
+
+                    yield return cycleCommand;
+
+                    // Inner door control
+                    Command_Target innerCommand = new Command_Target
+                    {
+                        defaultLabel = innerDoorOpen ? "Close inner" : "Open inner",
+                        defaultDesc = "Select a pawn to manually control the inner door.",
+                        icon = TexCommand.Install,
+                        targetingParams = TargetingParameters.ForPawns(),
+                        action = delegate (LocalTargetInfo target)
+                        {
+                            if (target.Pawn != null && target.Pawn.Faction == Faction.OfPlayer)
+                            {
+                                Job job = JobMaker.MakeJob(DecompressionJobDefOf.UseAirlock, this);
+                                job.count = 1; // Flag for inner door
+                                target.Pawn.jobs.TryTakeOrderedJob(job, JobTag.Misc);
+                            }
+                        }
+                    };
+
+                    if (isCycling)
+                    {
+                        innerCommand.Disable("Airlock is currently cycling");
+                    }
+
+                    yield return innerCommand;
+
+                    // Outer door control
+                    Command_Target outerCommand = new Command_Target
+                    {
+                        defaultLabel = outerDoorOpen ? "Close outer" : "Open outer",
+                        defaultDesc = "Select a pawn to manually control the outer door.",
+                        icon = TexCommand.Install,
+                        targetingParams = TargetingParameters.ForPawns(),
+                        action = delegate (LocalTargetInfo target)
+                        {
+                            if (target.Pawn != null && target.Pawn.Faction == Faction.OfPlayer)
+                            {
+                                Job job = JobMaker.MakeJob(DecompressionJobDefOf.UseAirlock, this);
+                                job.count = 2; // Flag for outer door
+                                target.Pawn.jobs.TryTakeOrderedJob(job, JobTag.Misc);
+                            }
+                        }
+                    };
+
+                    if (isCycling)
+                    {
+                        outerCommand.Disable("Airlock is currently cycling");
+                    }
+
+                    yield return outerCommand;
+                }
+
+                // Automatic cycle toggle
+                yield return new Command_Toggle
+                {
+                    defaultLabel = "Auto-cycle",
+                    defaultDesc = "When enabled, pawns will automatically cycle through the airlock when there's a pressure difference. When disabled, doors can be controlled manually.",
+                    icon = TexCommand.ForbidOff,
+                    isActive = () => automaticCycle,
+                    toggleAction = ToggleAutomaticCycle
+                };
+            }
+        }
+
+        public override void ExposeData()
+        {
+            base.ExposeData();
+            Scribe_Values.Look(ref innerDoorOpen, "innerDoorOpen", true); // Default true
+            Scribe_Values.Look(ref outerDoorOpen, "outerDoorOpen", false); // Default false
+            Scribe_Values.Look(ref automaticCycle, "automaticCycle", true);
+            Scribe_Values.Look(ref isPlayerControlled, "isPlayerControlled", false);
+            Scribe_Values.Look(ref isCycling, "isCycling", false);
+            Scribe_Values.Look(ref cyclingTicksRemaining, "cyclingTicksRemaining", 0);
+            Scribe_Values.Look(ref cycleCompleted, "cycleCompleted", false);
+            Scribe_Values.Look(ref fullyInitialized, "fullyInitialized", true); // Default true for saves
+            Scribe_Values.Look(ref autoCycleCooldown, "autoCycleCooldown", 0);
+            Scribe_References.Look(ref currentUser, "currentUser");
+        }
+
+        public override string GetInspectString()
+        {
+            var sb = new System.Text.StringBuilder();
+
+            // Get base inspect string but avoid calling problematic properties
+            try
+            {
+                string baseString = base.GetInspectString();
+                if (!string.IsNullOrEmpty(baseString))
+                {
+                    sb.Append(baseString);
+                }
+            }
+            catch
+            {
+                // Skip base inspect string if it causes issues
+            }
+
+            if (sb.Length > 0) sb.AppendLine();
+
+            // Show initialization status for debugging
+            if (!fullyInitialized)
+            {
+                sb.AppendLine("Status: Initializing...");
+            }
+            else if (isCycling)
+            {
+                sb.AppendLine($"Cycling ({cyclingTicksRemaining} ticks remaining)");
+            }
+            else
+            {
+                sb.AppendLine($"Inner door: {(innerDoorOpen ? "Open" : "Closed")}");
+                sb.AppendLine($"Outer door: {(outerDoorOpen ? "Open" : "Closed")}");
+
+                if (IsSealed)
+                {
+                    sb.AppendLine("Status: Sealed (airtight)");
+                }
+                else if (innerDoorOpen && outerDoorOpen)
+                {
+                    sb.AppendLine("Status: Open (atmosphere mixing)");
+                }
+                else
+                {
+                    sb.AppendLine("Status: Partially open (airtight)");
+                }
+            }
+
+            sb.AppendLine($"Auto-cycle: {(automaticCycle ? "On" : "Off")}");
+
+            if (autoCycleCooldown > 0)
+            {
+                sb.AppendLine($"Cooldown: {autoCycleCooldown} ticks");
+            }
+
+            return sb.ToString().TrimEnd();
+        }
+    }
+}

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<Defs>
+    <JobDef>
+        <defName>SeekOxygen</defName>
+        <driverClass>DecompressionMod.JobDriver_SeekOxygen</driverClass>
+        <reportString>seeking oxygen</reportString>
+        <joyDuration>1</joyDuration>
+        <suspendable>false</suspendable>
+        <playerInterruptible>true</playerInterruptible>
+    </JobDef>
+</Defs>
+
+<!--   
+  <JobDef>
+    <defName>UseAirlock</defName>
+    <driverClass>DecompressionMod.JobDriver_UseAirlock</driverClass>
+    <reportString>operating airlock.</reportString>
+    <joyDuration>4000</joyDuration>
+    <joyMaxParticipants>1</joyMaxParticipants>
+  </JobDef>
+-->

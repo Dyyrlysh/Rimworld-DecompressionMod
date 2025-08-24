@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+  <ThingDef ParentName="Wall">
+    <defName>StationWall</defName>
+    <label>station wall</label>
+    <description>A paneled, airtight wall suitable for orbital stations.</description>
+    <designationCategory>Odyssey</designationCategory>
+    <uiOrder>1800</uiOrder>
+    <uiIconPath>Things/Building/Linked/StationWall/StationWall_MenuIcon</uiIconPath>
+    <graphicData>
+      <texPath>Things/Building/Linked/StationWall/StationWall_Atlas</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <color>(239,241,241)</color>
+    </graphicData>
+    <altitudeLayer>Building</altitudeLayer>
+    <statBases>
+      <MaxHitPoints>500</MaxHitPoints>
+      <WorkToBuild>300</WorkToBuild>
+      <Flammability>0</Flammability>
+    </statBases>
+    <costList>
+      <GravlitePanel>1</GravlitePanel>
+      <Steel>7</Steel>
+    </costList>
+    <costStuffCount>0</costStuffCount>
+    <building>
+      <paintable>true</paintable>
+      <isAirtight>true</isAirtight>
+      <deconstructible>true</deconstructible>
+      <isEdifice>true</isEdifice>
+    </building>
+    <useStuffTerrainAffordance>false</useStuffTerrainAffordance>
+    <stuffCategories Inherit="False"/>
+  </ThingDef>
+</Defs>
+
+<!-- Mini Airlock Building
+  <ThingDef ParentName="BuildingBase">
+    <defName>MiniAirlock</defName>
+    <label>mini airlock</label>
+    <description>A compact chamber designed for safe traversal into vacuum through equalization of air pressure between both environments. Can be manually overridden for emergencies.</description>
+    <thingClass>DecompressionMod.Building_MiniAirlock</thingClass>
+    <category>Building</category>
+    <graphicData>
+      <texPath>Things/Building/Door/MiniAirlock</texPath>
+      <graphicClass>DecompressionMod.Graphic_MiniAirlock</graphicClass>
+      <drawSize>(1.72, 1.72)</drawSize>
+      <shaderType>CutoutComplex</shaderType>
+    </graphicData>
+    <altitudeLayer>BuildingOnTop</altitudeLayer>
+   CRITICAL: Make impassable for room building but allow pawns via BlocksPawn override
+    <fillPercent>1.0</fillPercent>
+    <passability>Impassable</passability>
+    <useHitPoints>true</useHitPoints>
+    <statBases>
+      <MaxHitPoints>450</MaxHitPoints>
+      <WorkToBuild>3500</WorkToBuild>
+      <Flammability>0</Flammability>
+      <Beauty>-2</Beauty>
+      <Mass>120</Mass>
+    </statBases>
+    <tickerType>Normal</tickerType>
+    <rotatable>true</rotatable>
+    <size>(1,1)</size>
+    <blockWind>true</blockWind>
+    <coversFloor>true</coversFloor>
+    <blockLight>false</blockLight>
+    <canOverlapZones>false</canOverlapZones>
+    <castEdgeShadows>true</castEdgeShadows>
+    <holdsRoof>true</holdsRoof>
+ CHANGED: Now Impassable instead of Standable 
+    <pathCost>0</pathCost>
+    <costList>
+      <Steel>150</Steel>
+      <ComponentIndustrial>1</ComponentIndustrial>
+    </costList>
+    <leaveResourcesWhenKilled>false</leaveResourcesWhenKilled>
+    <selectable>true</selectable>
+    <drawerType>MapMeshAndRealTime</drawerType>
+    <repairEffect>ConstructMetal</repairEffect>
+    <constructEffect>ConstructMetal</constructEffect>
+    <constructionSkillPrerequisite>8</constructionSkillPrerequisite>
+    <researchPrerequisites>
+      <li>ComplexFurniture</li>
+    </researchPrerequisites>
+    <building>
+  <isEdifice>true</isEdifice>
+  <canPlaceOverWall>true</canPlaceOverWall>
+  <soundDoorOpenManual>Door_OpenManual</soundDoorOpenManual>
+  <soundDoorCloseManual>Door_CloseManual</soundDoorCloseManual>
+  <blueprintClass>Blueprint_Build</blueprintClass>
+  <wantsHopperAdjacent>false</wantsHopperAdjacent>
+
+ Keep airtight, but DO NOT advertise generic exchange at def level 
+  <isAirtight>true</isAirtight>
+  <canExchangeVacuum>false</canExchangeVacuum>
+  <alwaysExchangeVacuum>false</alwaysExchangeVacuum>
+
+  <ai_chillDestination>false</ai_chillDestination>
+  <roamerCanOpen>false</roamerCanOpen>
+</building>
+
+    <comps>
+      <li Class="CompProperties_Forbiddable"/>
+    </comps>
+    <placeWorkers>
+      <li>DecompressionMod.PlaceWorker_MiniAirlock</li>
+    </placeWorkers>
+    <designationCategory>Odyssey</designationCategory>
+    <uiOrder>3010</uiOrder>
+  </ThingDef> -->

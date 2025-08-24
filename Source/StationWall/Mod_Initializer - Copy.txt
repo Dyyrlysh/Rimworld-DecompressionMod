@@ -1,0 +1,183 @@
+﻿using HarmonyLib;
+using RimWorld;
+using System;
+using System.Collections.Generic;
+using Verse;
+
+namespace DecompressionMod
+{
+    public class DecompressionMod : Mod
+    {
+        public DecompressionMod(ModContentPack content) : base(content)
+        {
+            Log.Message("[DecompressionMod] Mod constructor called.");
+        }
+    }
+
+    // Initialize AFTER the game loads to avoid conflicts
+    [StaticConstructorOnStartup]
+    public static class PostGameInitializer
+    {
+        static PostGameInitializer()
+        {
+            try
+            {
+                Log.Message("[DecompressionMod] Post-game initialization starting...");
+
+                // Initialize job definitions
+                InitializeJobDefs();
+
+                Log.Message("[DecompressionMod] Initialization complete.");
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"[DecompressionMod] Critical initialization error: {ex}");
+            }
+        }
+
+        private static void InitializeJobDefs()
+        {
+            try
+            {
+                // Only ensure the one job def we actually use exists
+                EnsureJobDefExists("UseAirlock", typeof(JobDriver_UseAirlock), "cycling airlock");
+
+                // Update DefOf reference - but handle the case where it might be null
+                var useAirlockJob = DefDatabase<JobDef>.GetNamedSilentFail("UseAirlock");
+                if (useAirlockJob != null)
+                {
+                    DecompressionJobDefOf.UseAirlock = useAirlockJob;
+                    Log.Message("[DecompressionMod] UseAirlock job definition linked successfully.");
+                }
+                else
+                {
+                    Log.Warning("[DecompressionMod] UseAirlock job definition not found!");
+                }
+
+                Log.Message("[DecompressionMod] Job definitions initialized.");
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"[DecompressionMod] Error initializing job definitions: {ex}");
+            }
+        }
+
+        private static void EnsureJobDefExists(string defName, Type driverClass, string reportString)
+        {
+            try
+            {
+                if (DefDatabase<JobDef>.GetNamedSilentFail(defName) == null)
+                {
+                    Log.Warning($"[DecompressionMod] JobDef {defName} not found in XML, creating runtime version.");
+
+                    JobDef jobDef = new JobDef
+                    {
+                        defName = defName,
+                        driverClass = driverClass,
+                        reportString = reportString,
+                        casualInterruptible = false,
+                        playerInterruptible = true,
+                        suspendable = false,
+                        checkOverrideOnDamage = CheckJobOverrideOnDamageMode.Never,
+                        alwaysShowWeapon = false
+                    };
+
+                    // Manually add to the database
+                    DefDatabase<JobDef>.Add(jobDef);
+                    Log.Message($"[DecompressionMod] Created runtime JobDef: {defName}");
+                }
+                else
+                {
+                    Log.Message($"[DecompressionMod] Found existing JobDef: {defName}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"[DecompressionMod] Error ensuring JobDef {defName} exists: {ex}");
+            }
+        }
+    }
+
+    // SAFER version of the vacuum component patch
+    [HarmonyPatch(typeof(VacuumComponent), "ExchangeRoomVacuum")]
+    public static class VacuumComponent_ExchangeRoomVacuum_Patch
+    {
+        private static int lastProcessedTick = -1;
+
+        [HarmonyPostfix]
+        public static void Postfix(VacuumComponent __instance)
+        {
+            try
+            {
+                // Prevent multiple calls per tick
+                int currentTick = Find.TickManager.TicksGame;
+                if (currentTick == lastProcessedTick) return;
+                lastProcessedTick = currentTick;
+
+                var map = __instance.map;
+                if (map == null) return;
+
+                var decompComponent = map.GetComponent<Decompression_Component>();
+                if (decompComponent == null) return;
+
+                // Extract current vacuum levels from all rooms
+                var currentVacuumLevels = new Dictionary<Room, float>();
+
+                foreach (var room in map.regionGrid.AllRooms)
+                {
+                    if (room != null && !room.ExposedToSpace)
+                    {
+                        currentVacuumLevels[room] = room.Vacuum;
+                    }
+                }
+
+                decompComponent.DetectDecompressionEvents(currentVacuumLevels);
+            }
+            catch (Exception ex)
+            {
+                // Don't spam errors - only log in dev mode
+                if (Prefs.DevMode)
+                {
+                    Log.Warning($"[DecompressionMod] VacuumComponent patch error: {ex.Message}");
+                }
+            }
+        }
+    }
+
+    // SAFER version of the pawn spawning patch
+    [HarmonyPatch(typeof(Pawn), "SpawnSetup")]
+    public static class Patch_Pawn_SpawnSetup_AddOxygenComponent
+    {
+        [HarmonyPostfix]
+        public static void Postfix(Pawn __instance)
+        {
+            try
+            {
+                // Only add to humanoid pawns
+                if (__instance?.RaceProps?.Humanlike == true)
+                {
+                    var existingComp = __instance.GetComp<CompOxygenTracker>();
+                    if (existingComp == null)
+                    {
+                        var comp = new CompOxygenTracker();
+                        comp.parent = __instance;
+                        comp.Initialize(new CompProperties_OxygenTracker());
+                        __instance.AllComps.Add(comp);
+
+                        if (Prefs.DevMode)
+                        {
+                            Log.Message($"[DecompressionMod] Added oxygen component to {__instance.Name}");
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                if (Prefs.DevMode)
+                {
+                    Log.Warning($"[DecompressionMod] Error adding oxygen component to {__instance?.Name}: {ex.Message}");
+                }
+            }
+        }
+    }
+}

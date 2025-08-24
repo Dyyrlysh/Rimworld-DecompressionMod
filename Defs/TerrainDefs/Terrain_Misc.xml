@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+    <TerrainDef ParentName="FloorBase">
+        <defName>StationFloor</defName>
+        <label>station floor</label>
+        <description>Slip-free rubber flooring designed to withstand impacts in unstable conditions. Perfect for orbital stations.</description>
+        <texturePath>Terrain/Surfaces/StationFloor/StationFloor</texturePath>
+        <uiIconPath>Terrain/Surfaces/StationFloor/StationFloor_MenuIcon</uiIconPath>
+        <!-- <spaceEdgeGraphicData Inherit="False">
+            <OShapeTexPath>Terrain/Surfaces/StationFloor/BorderInside/StationFloorBorderInside_OShape</OShapeTexPath>
+            <UShapeTexPath>Terrain/Surfaces/StationFloor/BorderInside/StationFloorBorderInside_UShape</UShapeTexPath>
+            <CornerInnerTexPath>Terrain/Surfaces/StationFloor/BorderInside/StationFloorBorderInside_CornerInner</CornerInnerTexPath>
+            <CornerOuterTexPath>Terrain/Surfaces/StationFloor/BorderInside/StationFloorBorderInside_CornerOuter</CornerOuterTexPath>
+            <FlatTexPath>Terrain/Surfaces/StationFloor/BorderInside/StationFloorBorderInside_Flat</FlatTexPath>
+        </spaceEdgeGraphicData> -->
+        <isPaintable>true</isPaintable>
+        <color>(239,241,241)</color>
+        <edgeType>Hard</edgeType>
+        <renderPrecedence>400
+        <tags>
+            <li>Floor</li>
+            <li>Fine</li>
+        </tags>
+        </renderPrecedence>
+        <statBases>
+            <WorkToBuild>315</WorkToBuild>
+            <Cleanliness>0.2</Cleanliness>
+        </statBases>
+        <costList>
+            <Steel>3</Steel>
+            <GravlitePanel>1</GravlitePanel>
+        </costList>
+        <constructEffect>ConstructMetal</constructEffect>
+    </TerrainDef>
+</Defs>

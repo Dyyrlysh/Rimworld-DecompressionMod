@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+  <ThingDef>
+    <defName>FurnitureProjectile_Decompression</defName>
+    <label>flying furniture</label>
+    <thingClass>DecompressionMod.FurnitureProjectile</thingClass>
+    <category>Projectile</category>
+    <altitudeLayer>Projectile</altitudeLayer>
+    <useHitPoints>false</useHitPoints>
+    <neverMultiSelect>true</neverMultiSelect>
+    <tickerType>Normal</tickerType>
+    <graphicData>
+      <texPath>UI/Commands/Attack</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <drawSize>1</drawSize>
+    </graphicData>
+    <projectile>
+      <speed>8</speed>
+      <arcHeightFactor>1.2</arcHeightFactor>
+      <shadowSize>1.5</shadowSize>
+      <flyOverhead>false</flyOverhead>
+      <alwaysFreeIntercept>false</alwaysFreeIntercept>
+      <damageDef>Blunt</damageDef>
+      <damageAmountBase>1</damageAmountBase>
+      <armorPenetrationBase>0</armorPenetrationBase>
+    </projectile>
+  </ThingDef>
+</Defs>

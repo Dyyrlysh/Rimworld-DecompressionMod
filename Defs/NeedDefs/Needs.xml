@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+  <NeedDef>
+    <defName>Oxygen</defName>
+    <needClass>DecompressionMod.Need_Oxygen</needClass>
+    <label>oxygen</label>
+    <description>Oxygen is the amount of breathable air a creature currently has stored. If it is at zero, a creature will quickly suffocate, fall comatose, and eventually die. Life support equipment should be utilized when entering non-breathable environments, such as underwater or in space.</description>
+    <showOnNeedList>true</showOnNeedList>
+    <listPriority>20</listPriority>
+    <major>false</major>
+    <freezeWhileSleeping>false</freezeWhileSleeping>
+    <showForCaravanMembers>true</showForCaravanMembers>
+    <scaleBar>true</scaleBar>
+    <tutorHighlightTag>NeedOxygen</tutorHighlightTag>
+    <colonistsOnly>true</colonistsOnly>
+    <developmentalStageFilter>Baby, Child, Adult</developmentalStageFilter>
+  </NeedDef>
+</Defs>

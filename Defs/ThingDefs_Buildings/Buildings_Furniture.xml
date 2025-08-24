@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<Defs>
+  <ThingDef ParentName="BuildingBase">
+      <defName>O2Lamp</defName>
+      <designationCategory>Furniture</designationCategory>
+      <label>o2 lamp</label>
+      <description>A wall-mounted light fixture that changes color based on the atmospheric integrity around it.</description>
+      <rotatable>true</rotatable>
+      <graphicData>
+        <texPath>Things/Building/Furniture/O2Lamp/O2Lamp</texPath>
+        <graphicClass>Graphic_Multi</graphicClass>
+        <drawOffsetNorth>(0,0,0.9)</drawOffsetNorth>
+        <drawOffsetSouth>(0,0,-0.9)</drawOffsetSouth>
+        <drawOffsetWest>(-0.9,0,0)</drawOffsetWest>
+        <drawOffsetEast>(0.9,0,0)</drawOffsetEast>
+        <damageData>
+          <enabled>false</enabled>
+        </damageData>
+      </graphicData>
+      <uiIconPath>Things/Building/Furniture/O2Lamp/O2Lamp_MenuIcon</uiIconPath>
+      <altitudeLayer>BuildingOnTop</altitudeLayer>
+      <costList>
+        <Steel>15</Steel>
+      </costList>
+      <statBases>
+        <WorkToBuild>330</WorkToBuild>
+        <MaxHitPoints>35</MaxHitPoints>
+        <Mass>2</Mass>
+      </statBases>
+      <uiOrder>2991</uiOrder>
+      <passability>Standable</passability>
+      <terrainAffordanceNeeded IsNull="True" />
+      <pathCost>0</pathCost>
+      <overrideMinifiedRot>North</overrideMinifiedRot>
+      <minifiedDrawOffset>(0, 0, 0.2)</minifiedDrawOffset>
+      <building>
+        <isEdifice>false</isEdifice>
+        <isAttachment>true</isAttachment>
+      </building>
+      <placeWorkers>
+        <li>Placeworker_AttachedToWall</li>
+      </placeWorkers>
+      <researchPrerequisites>
+        <li>BasicGravtech</li>
+      </researchPrerequisites>
+      <comps>
+        <li Class="CompProperties_Power">
+          <compClass>CompPowerTrader</compClass>
+          <basePowerConsumption>30</basePowerConsumption>
+        </li>
+        <li Class="CompProperties_Glower">
+          <glowRadius>11</glowRadius>
+          <glowColor>(255,255,237,0)</glowColor>
+          <colorPickerEnabled>false</colorPickerEnabled>
+          <darklightToggle>true</darklightToggle>
+        </li>
+      </comps>
+    </ThingDef>
+</Defs>

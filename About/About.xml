@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ModMetaData>
+  <name>Station Wall</name>
+  <author>Dyyrlysh</author>
+  <description>Station-related items.</description>
+  <packageId>dyyrlysh.stationwall</packageId>
+  <supportedVersions>
+    <li>1.6</li>
+  </supportedVersions>
+</ModMetaData>

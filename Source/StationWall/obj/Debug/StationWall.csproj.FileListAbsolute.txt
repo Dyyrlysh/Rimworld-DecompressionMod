@@ -1,0 +1,2 @@
+C:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\SpaceStationMod\Assemblies\StationWall\StationWall\obj\Debug\StationWall.csproj.AssemblyReference.cache
+C:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\SpaceStationMod\Assemblies\StationWall\StationWall\obj\Debug\StationWall.csproj.CoreCompileInputs.cache

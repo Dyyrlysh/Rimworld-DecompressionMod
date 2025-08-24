@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<Defs>
+    <ThoughtDef>
+        <defName>Suffocating</defName>
+        <workerClass>DecompressionMod.ThoughtWorker_Suffocating</workerClass>
+        <validWhileDespawned>false</validWhileDespawned>
+        <developmentalStageFilter>Baby, Child, Adult</developmentalStageFilter>
+        <stages>
+            <li>
+                <label>suffocating</label>
+                <description>Can't... breathe...! Need... air!!</description>
+                <baseMoodEffect>-30</baseMoodEffect>
+            </li>
+        </stages>
+    </ThoughtDef>
+</Defs>
