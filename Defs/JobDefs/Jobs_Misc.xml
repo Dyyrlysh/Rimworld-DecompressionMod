@@ -9,8 +9,14 @@
         <suspendable>false</suspendable>
         <playerInterruptible>true</playerInterruptible>
     </JobDef>
-</Defs>
 
+    <JobDef>
+      <defName>ViewWindow</defName>
+      <driverClass>StationWall.ReinforcedWindow.JobDriver_ViewWindow</driverClass>
+      <reportString>looking outside a window.</reportString>
+      <joyKind>Meditative</joyKind>
+    </JobDef>
+</Defs>
 <!--   
   <JobDef>
     <defName>UseAirlock</defName>

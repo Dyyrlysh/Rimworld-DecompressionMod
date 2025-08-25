@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+    <JoyGiverDef>
+        <defName>ViewWindow</defName>
+        <joyKind>Meditative</joyKind>
+        <jobDef>ViewWindow</jobDef>
+        <canDoWhileInBed>true</canDoWhileInBed>
+        <baseChance>1</baseChance>
+        <thingDefs>
+            <li>ReinforcedWindow</li>
+        </thingDefs>
+        <requiredCapacities>
+            <li>Sight</li>
+        </requiredCapacities>
+        <desireSit>false</desireSit>
+        <giverClass>StationWall.ReinforcedWindow.JoyGiver_ViewReinforcedWindow</giverClass>
+    </JoyGiverDef>
+</Defs>

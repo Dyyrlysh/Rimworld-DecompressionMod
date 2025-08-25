@@ -73,6 +73,11 @@
     <Compile Include="Mod_Initializer.cs" />
     <Compile Include="Pawn_Injury_Utility.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ReinforcedWindow\BuildGizmo_ReinforcedWindow.cs" />
+    <Compile Include="ReinforcedWindow\Graphic_LinkedReinforcedWindow.cs" />
+    <Compile Include="ReinforcedWindow\JobDriver_ViewWindow.cs" />
+    <Compile Include="ReinforcedWindow\JoyGiver_ViewReinforcedWindow.cs" />
+    <Compile Include="ReinforcedWindow\PlaceWorker_OnlyOnGravshipOrStationWall.cs" />
     <Compile Include="SectionLayer_StationFloor.cs" />
     <Compile Include="SectionLayer_StationWall.cs" />
     <Compile Include="StationWall_Patch.cs" />

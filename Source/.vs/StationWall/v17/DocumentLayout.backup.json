@@ -3,24 +3,32 @@
   "WorkspaceRootPath": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\SpaceStationMod\\Source\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{25B05580-69B7-41D8-94F5-44134FD4F199}|StationWall\\StationWall.csproj|c:\\program files (x86)\\steam\\steamapps\\common\\rimworld\\mods\\spacestationmod\\source\\stationwall\\reinforcedwindow\\joygiver_viewreinforcedwindow.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{25B05580-69B7-41D8-94F5-44134FD4F199}|StationWall\\StationWall.csproj|solutionrelative:stationwall\\reinforcedwindow\\joygiver_viewreinforcedwindow.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{25B05580-69B7-41D8-94F5-44134FD4F199}|StationWall\\StationWall.csproj|c:\\program files (x86)\\steam\\steamapps\\common\\rimworld\\mods\\spacestationmod\\source\\stationwall\\reinforcedwindow\\jobdriver_viewwindow.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{25B05580-69B7-41D8-94F5-44134FD4F199}|StationWall\\StationWall.csproj|solutionrelative:stationwall\\reinforcedwindow\\jobdriver_viewwindow.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{25B05580-69B7-41D8-94F5-44134FD4F199}|StationWall\\StationWall.csproj|c:\\program files (x86)\\steam\\steamapps\\common\\rimworld\\mods\\spacestationmod\\source\\stationwall\\reinforcedwindow\\buildgizmo_reinforcedwindow.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{25B05580-69B7-41D8-94F5-44134FD4F199}|StationWall\\StationWall.csproj|solutionrelative:stationwall\\reinforcedwindow\\buildgizmo_reinforcedwindow.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{25B05580-69B7-41D8-94F5-44134FD4F199}|StationWall\\StationWall.csproj|C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\SpaceStationMod\\Source\\stationwall\\mod_initializer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{25B05580-69B7-41D8-94F5-44134FD4F199}|StationWall\\StationWall.csproj|solutionrelative:stationwall\\mod_initializer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{25B05580-69B7-41D8-94F5-44134FD4F199}|StationWall\\StationWall.csproj|c:\\program files (x86)\\steam\\steamapps\\common\\rimworld\\mods\\spacestationmod\\source\\stationwall\\compoxygentracker.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{25B05580-69B7-41D8-94F5-44134FD4F199}|StationWall\\StationWall.csproj|solutionrelative:stationwall\\compoxygentracker.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{25B05580-69B7-41D8-94F5-44134FD4F199}|StationWall\\StationWall.csproj|c:\\program files (x86)\\steam\\steamapps\\common\\rimworld\\mods\\spacestationmod\\source\\stationwall\\reinforcedwindow\\graphic_linkedreinforcedwindow.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{25B05580-69B7-41D8-94F5-44134FD4F199}|StationWall\\StationWall.csproj|solutionrelative:stationwall\\reinforcedwindow\\graphic_linkedreinforcedwindow.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{25B05580-69B7-41D8-94F5-44134FD4F199}|StationWall\\StationWall.csproj|c:\\program files (x86)\\steam\\steamapps\\common\\rimworld\\mods\\spacestationmod\\source\\stationwall\\reinforcedwindow\\placeworker_onlyongravshiporstationwall.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{25B05580-69B7-41D8-94F5-44134FD4F199}|StationWall\\StationWall.csproj|solutionrelative:stationwall\\reinforcedwindow\\placeworker_onlyongravshiporstationwall.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{25B05580-69B7-41D8-94F5-44134FD4F199}|StationWall\\StationWall.csproj|C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\SpaceStationMod\\Source\\stationwall\\decompression_component.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{25B05580-69B7-41D8-94F5-44134FD4F199}|StationWall\\StationWall.csproj|solutionrelative:stationwall\\decompression_component.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{25B05580-69B7-41D8-94F5-44134FD4F199}|StationWall\\StationWall.csproj|c:\\program files (x86)\\steam\\steamapps\\common\\rimworld\\mods\\spacestationmod\\source\\stationwall\\stationwall_patch.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{25B05580-69B7-41D8-94F5-44134FD4F199}|StationWall\\StationWall.csproj|solutionrelative:stationwall\\stationwall_patch.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{25B05580-69B7-41D8-94F5-44134FD4F199}|StationWall\\StationWall.csproj|c:\\program files (x86)\\steam\\steamapps\\common\\rimworld\\mods\\spacestationmod\\source\\stationwall\\sectionlayer_stationwall.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{25B05580-69B7-41D8-94F5-44134FD4F199}|StationWall\\StationWall.csproj|solutionrelative:stationwall\\sectionlayer_stationwall.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -30,11 +38,11 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 3,
+          "SelectedChildIndex": 2,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 6,
               "Title": "Decompression_Component.cs",
               "DocumentMoniker": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\SpaceStationMod\\Source\\StationWall\\Decompression_Component.cs",
               "RelativeDocumentMoniker": "StationWall\\Decompression_Component.cs",
@@ -43,59 +51,84 @@
               "ViewState": "AgIAAE8BAAAAAAAAAAAmwGkBAAAfAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-08-01T19:58:42.533Z",
-              "IsPinned": true,
-              "EditorCaption": ""
+              "IsPinned": true
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "CompOxygenTracker.cs",
-              "DocumentMoniker": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\SpaceStationMod\\Source\\StationWall\\CompOxygenTracker.cs",
-              "RelativeDocumentMoniker": "StationWall\\CompOxygenTracker.cs",
-              "ToolTip": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\SpaceStationMod\\Source\\StationWall\\CompOxygenTracker.cs",
-              "RelativeToolTip": "StationWall\\CompOxygenTracker.cs",
-              "ViewState": "AgIAAPIBAAAAAAAAAAAAAPIBAAAxAAAAAAAAAA==",
+              "DocumentIndex": 2,
+              "Title": "BuildGizmo_ReinforcedWindow.cs",
+              "DocumentMoniker": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\SpaceStationMod\\Source\\StationWall\\ReinforcedWindow\\BuildGizmo_ReinforcedWindow.cs",
+              "RelativeDocumentMoniker": "StationWall\\ReinforcedWindow\\BuildGizmo_ReinforcedWindow.cs",
+              "ToolTip": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\SpaceStationMod\\Source\\StationWall\\ReinforcedWindow\\BuildGizmo_ReinforcedWindow.cs",
+              "RelativeToolTip": "StationWall\\ReinforcedWindow\\BuildGizmo_ReinforcedWindow.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAUwB4AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-08-21T04:23:48.809Z",
+              "WhenOpened": "2025-08-25T17:20:37.06Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "Mod_Initializer.cs",
-              "DocumentMoniker": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\SpaceStationMod\\Source\\StationWall\\Mod_Initializer.cs",
-              "RelativeDocumentMoniker": "StationWall\\Mod_Initializer.cs",
-              "ToolTip": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\SpaceStationMod\\Source\\StationWall\\Mod_Initializer.cs",
-              "RelativeToolTip": "StationWall\\Mod_Initializer.cs",
-              "ViewState": "AgIAADIAAAAAAAAAAAAvwD0AAABhAAAAAAAAAA==",
+              "Title": "JoyGiver_ViewReinforcedWindow.cs",
+              "DocumentMoniker": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\SpaceStationMod\\Source\\StationWall\\ReinforcedWindow\\JoyGiver_ViewReinforcedWindow.cs",
+              "RelativeDocumentMoniker": "StationWall\\ReinforcedWindow\\JoyGiver_ViewReinforcedWindow.cs",
+              "ToolTip": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\SpaceStationMod\\Source\\StationWall\\ReinforcedWindow\\JoyGiver_ViewReinforcedWindow.cs",
+              "RelativeToolTip": "StationWall\\ReinforcedWindow\\JoyGiver_ViewReinforcedWindow.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAANAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-08-13T15:49:44.318Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "StationWall_Patch.cs",
-              "DocumentMoniker": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\SpaceStationMod\\Source\\StationWall\\StationWall_Patch.cs",
-              "RelativeDocumentMoniker": "StationWall\\StationWall_Patch.cs",
-              "ToolTip": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\SpaceStationMod\\Source\\StationWall\\StationWall_Patch.cs",
-              "RelativeToolTip": "StationWall\\StationWall_Patch.cs",
-              "ViewState": "AgIAABkAAAAAAAAAAAAgwAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-08-19T22:03:52.96Z",
+              "WhenOpened": "2025-08-24T22:05:47.885Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 4,
-              "Title": "SectionLayer_StationWall.cs",
-              "DocumentMoniker": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\SpaceStationMod\\Source\\StationWall\\SectionLayer_StationWall.cs",
-              "RelativeDocumentMoniker": "StationWall\\SectionLayer_StationWall.cs",
-              "ToolTip": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\SpaceStationMod\\Source\\StationWall\\SectionLayer_StationWall.cs",
-              "RelativeToolTip": "StationWall\\SectionLayer_StationWall.cs",
-              "ViewState": "AgIAAAsAAAAAAAAAAAAAAAsAAAAEAAAAAAAAAA==",
+              "Title": "Graphic_LinkedReinforcedWindow.cs",
+              "DocumentMoniker": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\SpaceStationMod\\Source\\StationWall\\ReinforcedWindow\\Graphic_LinkedReinforcedWindow.cs",
+              "RelativeDocumentMoniker": "StationWall\\ReinforcedWindow\\Graphic_LinkedReinforcedWindow.cs",
+              "ToolTip": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\SpaceStationMod\\Source\\StationWall\\ReinforcedWindow\\Graphic_LinkedReinforcedWindow.cs",
+              "RelativeToolTip": "StationWall\\ReinforcedWindow\\Graphic_LinkedReinforcedWindow.cs",
+              "ViewState": "AgIAABsAAAAAAAAAAAAowEcAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-08-19T22:05:59.825Z",
+              "WhenOpened": "2025-08-24T19:26:22.75Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "JobDriver_ViewWindow.cs",
+              "DocumentMoniker": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\SpaceStationMod\\Source\\StationWall\\ReinforcedWindow\\JobDriver_ViewWindow.cs",
+              "RelativeDocumentMoniker": "StationWall\\ReinforcedWindow\\JobDriver_ViewWindow.cs",
+              "ToolTip": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\SpaceStationMod\\Source\\StationWall\\ReinforcedWindow\\JobDriver_ViewWindow.cs",
+              "RelativeToolTip": "StationWall\\ReinforcedWindow\\JobDriver_ViewWindow.cs",
+              "ViewState": "AgIAABgAAAAAAAAAAAA5wCUAAAASAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-24T18:48:28.684Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "PlaceWorker_OnlyOnGravshipOrStationWall.cs",
+              "DocumentMoniker": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\SpaceStationMod\\Source\\StationWall\\ReinforcedWindow\\PlaceWorker_OnlyOnGravshipOrStationWall.cs",
+              "RelativeDocumentMoniker": "StationWall\\ReinforcedWindow\\PlaceWorker_OnlyOnGravshipOrStationWall.cs",
+              "ToolTip": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\SpaceStationMod\\Source\\StationWall\\ReinforcedWindow\\PlaceWorker_OnlyOnGravshipOrStationWall.cs",
+              "RelativeToolTip": "StationWall\\ReinforcedWindow\\PlaceWorker_OnlyOnGravshipOrStationWall.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACQAAABBAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-24T18:37:00.808Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Mod_Initializer.cs",
+              "DocumentMoniker": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\SpaceStationMod\\Source\\StationWall\\Mod_Initializer.cs",
+              "RelativeDocumentMoniker": "StationWall\\Mod_Initializer.cs",
+              "ToolTip": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\SpaceStationMod\\Source\\StationWall\\Mod_Initializer.cs",
+              "RelativeToolTip": "StationWall\\Mod_Initializer.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABgAAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-13T15:49:44.318Z",
               "EditorCaption": ""
             }
           ]

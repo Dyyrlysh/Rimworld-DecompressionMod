@@ -32,6 +32,87 @@
     <useStuffTerrainAffordance>false</useStuffTerrainAffordance>
     <stuffCategories Inherit="False"/>
   </ThingDef>
+
+  <ThingDef ParentName="BuildingBase">
+    <defName>ReinforcedWindow</defName>
+    <label>reinforced window</label>
+    <description>A sturdy viewport with both decorational and practical functions. The obsidian used for its glass is especially heat-resistant and effectively blocks harmful ultraviolet radiation, making it ideal for use aboard spacecraft. The priviledge to gaze upon the stars eases the notably-harsh conditions present during long-term expeditions in space.</description>
+    <thingClass>Building</thingClass>
+    <category>Building</category>
+    
+    <!-- Graphics and Appearance -->
+    <graphicData>
+      <texPath>Things/Building/Linked/ReinforcedWindow/ReinforcedWindow</texPath>
+      <graphicClass>Graphic_LinkedReinforcedWindow</graphicClass>
+    </graphicData>
+    <uiIconPath>Things/Building/Linked/ReinforcedWindow/ReinforcedWindow_MenuIcon</uiIconPath>
+    
+    <!-- Physical Properties -->
+    <altitudeLayer>Building</altitudeLayer>
+    <passability>Impassable</passability>
+    <blockWind>true</blockWind>
+    <blockLight>false</blockLight> <!-- Key: doesn't block light -->
+    <fillPercent>1</fillPercent>
+    <coversFloor>true</coversFloor>
+    <tickerType>Never</tickerType>
+    <rotatable>false</rotatable>
+    <selectable>true</selectable>
+    <neverMultiSelect>true</neverMultiSelect>
+    <terrainAffordanceNeeded>Heavy</terrainAffordanceNeeded>
+    <holdsRoof>true</holdsRoof>
+    <designationCategory>Odyssey</designationCategory>
+    <specialDisplayRadius>7.9</specialDisplayRadius>
+    <staticSunShadowHeight>1.0</staticSunShadowHeight>
+    <blockPlants>true</blockPlants>
+    
+    <!-- Stats -->
+    <statBases>
+      <MaxHitPoints>150</MaxHitPoints>
+      <WorkToBuild>1000</WorkToBuild>
+      <Mass>10</Mass>
+      <Flammability>0.2</Flammability>
+      <Beauty>0</Beauty> <!-- Beauty value as requested -->
+    </statBases>
+    
+    <!-- Building Properties -->
+    <building>
+      <isAirtight>true</isAirtight>
+      <isInert>true</isInert>
+      <ai_chillDestination>false</ai_chillDestination>
+      <blueprintGraphicData>
+        <texPath>Things/Building/Linked/ReinforcedWindow/ReinforcedWindow</texPath>
+        <graphicClass>Graphic_LinkedReinforcedWindow</graphicClass>
+      </blueprintGraphicData>
+    </building>
+    
+    <!-- Cost -->
+    <costList>
+      <Steel>25</Steel>
+      <Obsidian>10</Obsidian>
+    </costList>
+    
+    <!-- Research Requirements -->
+    <researchPrerequisites>
+      <li>BasicGravtech</li> <!-- Adjust based on your tech tree -->
+    </researchPrerequisites>
+    
+    <!-- Placement Restrictions -->
+    <placeWorkers>
+      <li>StationWall.ReinforcedWindow.PlaceWorker_OnlyOnGravshipOrStationWall</li>
+    </placeWorkers>
+
+    <!-- Damage -->
+    <damageMultipliers>
+      <li>
+        <damageDef>Bomb</damageDef>
+        <multiplier>2.0</multiplier>
+      </li>
+      <li>
+        <damageDef>Mining</damageDef>
+        <multiplier>3.0</multiplier>
+      </li>
+    </damageMultipliers>
+  </ThingDef>
 </Defs>
 
 <!-- Mini Airlock Building

@@ -1,0 +1,32 @@
+﻿using RimWorld;
+using System.Collections.Generic;
+using Verse;
+using Verse.AI;
+
+namespace StationWall.ReinforcedWindow
+{
+    public class JoyGiver_ViewReinforcedWindow : JoyGiver
+    {
+        private static readonly List<Thing> candidates = new List<Thing>();
+
+        public override Job TryGiveJob(Pawn pawn)
+        {
+            try
+            {
+                // Use the base class method to get candidates - it handles thingDefs from XML
+                GetSearchSet(pawn, candidates);
+
+                if (!candidates.TryRandomElement(out Thing chosenWindow))
+                {
+                    return null;
+                }
+
+                return JobMaker.MakeJob(def.jobDef, chosenWindow);
+            }
+            finally
+            {
+                candidates.Clear();
+            }
+        }
+    }
+}
